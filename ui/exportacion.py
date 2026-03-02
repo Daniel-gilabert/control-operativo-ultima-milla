@@ -25,7 +25,7 @@ def render_exportacion(
     pdf_svc = InformePDFService(logo_path=logo_path)
     xls_svc = InformeExcelService()
 
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2 = st.columns(2)
 
     with col1:
         pdf_global = pdf_svc.generar_pdf_global(resumen_global, mes, anno)
@@ -46,28 +46,3 @@ def render_exportacion(
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             use_container_width=True,
         )
-
-    st.markdown("##### Informes individuales")
-    for emp_data in resumen_global:
-        nombre_safe = emp_data["nombre"].replace(" ", "_")
-        c1, c2 = st.columns(2)
-        with c1:
-            pdf_ind = pdf_svc.generar_pdf_individual(emp_data, mes, anno)
-            st.download_button(
-                label=f"PDF — {emp_data['nombre']}",
-                data=pdf_ind,
-                file_name=f"informe_{nombre_safe}_{nombre_mes}_{anno}.pdf",
-                mime="application/pdf",
-                use_container_width=True,
-                key=f"pdf_ind_{emp_data['id']}",
-            )
-        with c2:
-            xls_ind = xls_svc.generar_excel_individual(emp_data, mes, anno)
-            st.download_button(
-                label=f"Excel — {emp_data['nombre']}",
-                data=xls_ind,
-                file_name=f"informe_{nombre_safe}_{nombre_mes}_{anno}.xlsx",
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                use_container_width=True,
-                key=f"xls_ind_{emp_data['id']}",
-            )
