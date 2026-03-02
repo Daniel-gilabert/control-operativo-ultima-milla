@@ -116,7 +116,10 @@ with tab_ficha:
             fi_val = date.fromisoformat(str(fi_str)[:10]) if fi_str else hoy
             ff_val = date.fromisoformat(str(ff_str)[:10]) if ff_str else None
             fi_cont = c1.date_input("Fecha inicio del servicio", value=fi_val)
-            ff_cont = c2.date_input("Fecha fin del servicio (opcional)", value=ff_val or fi_val)
+            tiene_fin = c2.checkbox("¿Tiene fecha de fin?", value=ff_val is not None)
+            ff_cont = None
+            if tiene_fin:
+                ff_cont = c2.date_input("Fecha fin del servicio", value=ff_val or hoy)
 
             st.subheader("Recursos asignados")
             c1, c2 = st.columns(2)
@@ -220,6 +223,8 @@ with tab_ficha:
         st.write(f"Inicio: {srv.get('fecha_inicio_contrato') or '—'}")
         if srv.get("fecha_fin_contrato"):
             st.write(f"Fin: {srv['fecha_fin_contrato']}")
+        else:
+            st.markdown("<span style='background:#DCFCE7;color:#166534;padding:2px 10px;border-radius:6px;font-size:.85rem;font-weight:600'>✅ ACTIVO — sin fecha de fin</span>", unsafe_allow_html=True)
         if srv.get("facturacion_email"):
             st.write(f"Facturación: {srv['facturacion_email']}")
         if srv.get("facturacion_forma_pago"):
@@ -334,7 +339,10 @@ with tab_nuevo:
 
             c1, c2 = st.columns(2)
             fi_cont = c1.date_input("Fecha inicio del servicio", value=hoy)
-            ff_cont = c2.date_input("Fecha fin del servicio (opcional)", value=hoy)
+            tiene_fin_n = c2.checkbox("¿Tiene fecha de fin?", value=False, key="nuevo_tiene_fin")
+            ff_cont = None
+            if tiene_fin_n:
+                ff_cont = c2.date_input("Fecha fin del servicio", value=hoy, key="nuevo_ff")
 
             c1, c2 = st.columns(2)
             opts_emp = {f"{e['apellidos']}, {e['nombre']}": e["id"] for e in empleados}
