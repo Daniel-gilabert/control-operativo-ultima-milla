@@ -193,15 +193,6 @@ def render_panel_responsables(
 
     # ── Vista: Mi grupo ───────────────────────────────────────────────────────
     else:
-        powerbi_url = os.environ.get("POWERBI_URL", "").strip()
-        if powerbi_url:
-            st.link_button(
-                "Abrir informe PowerBI",
-                url=powerbi_url,
-                use_container_width=False,
-            )
-            st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
-
         empleados_propios = [e for e in todos_empleados if e.responsable_id == usuario.id]
         resumenes_propios = [resumen_por_id[e.id] for e in empleados_propios if e.id in resumen_por_id]
 

@@ -70,6 +70,7 @@ from repositories.empleado_repo import EmpleadoRepository
 from repositories.festivo_repo import FestivoRepository
 from repositories.incidencia_repo import IncidenciaRepository
 from repositories.panel_acceso_repo import PanelAccesoRepository
+from repositories.historico_repo import HistoricoRepository
 from services.fichaje_service import FichajeService
 from services.calculo_service import CalculoService
 from ui.login import render_login
@@ -77,6 +78,7 @@ from ui.configuracion import render_configuracion
 from ui.resumen import render_resumen
 from ui.exportacion import render_exportacion
 from ui.panel_responsables import render_panel_responsables
+from ui.historico import render_historico
 
 # =============================================================================
 # CONFIGURACIÓN DE PÁGINA
@@ -172,6 +174,7 @@ if es_panel_user:
     )
 
     render_panel_responsables(usuario, todos_empleados, resumen_global, mes, anno)
+    render_historico(usuario, resumen_global, anno, mes, mostrar_todos=True)
     st.stop()
 
 # =============================================================================
@@ -179,12 +182,20 @@ if es_panel_user:
 # =============================================================================
 
 st.divider()
-uploaded = st.file_uploader(
-    "Sube el Excel mensual de fichajes",
-    type=["xlsx"],
-    key="upload_excel",
-    help="Exportado directamente desde el sistema de control de presencia.",
-)
+
+_powerbi_url = os.environ.get("POWERBI_URL", "").strip()
+col_up, col_pbi = st.columns([4, 2])
+with col_up:
+    uploaded = st.file_uploader(
+        "Sube el Excel mensual de fichajes",
+        type=["xlsx"],
+        key="upload_excel",
+        help="Exportado directamente desde el sistema de control de presencia.",
+    )
+with col_pbi:
+    if _powerbi_url:
+        st.markdown("<div style='padding-top:28px'></div>", unsafe_allow_html=True)
+        st.link_button("Descargar Excel desde PowerBI", url=_powerbi_url, use_container_width=True)
 
 if not uploaded:
     st.info("Sube el Excel de fichajes para comenzar el análisis.")
@@ -213,3 +224,4 @@ mapa_incidencias = inc_repo.get_dias_por_empleado()
 render_configuracion(usuario, empleados, anno)
 resumen = render_resumen(empleados, df_fichajes, mapa_festivos, mapa_incidencias, anno, mes)
 render_exportacion(resumen, mes, anno, logo_path=LOGO_PATH)
+render_historico(usuario, resumen, anno, mes, mostrar_todos=False)
