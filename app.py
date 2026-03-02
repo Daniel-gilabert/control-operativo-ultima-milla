@@ -148,7 +148,7 @@ if es_panel_user:
         st.markdown(
             "<a href='#historico-evolucion' style='display:block;text-align:center;"
             "background:#1a3d6e;color:white;padding:8px 12px;border-radius:6px;"
-            "text-decoration:none;font-size:14px;'>Ver gráficas de evolución ↓</a>",
+            "text-decoration:none;font-size:14px;'>Ver histórico ↓</a>",
             unsafe_allow_html=True,
         )
 
@@ -202,7 +202,7 @@ with col_graf:
     st.markdown(
         "<a href='#historico-evolucion' style='display:block;text-align:center;"
         "background:#1a3d6e;color:white;padding:8px 12px;border-radius:6px;"
-        "text-decoration:none;font-size:14px;'>Ver gráficas de evolución ↓</a>",
+        "text-decoration:none;font-size:14px;'>Ver histórico ↓</a>",
         unsafe_allow_html=True,
     )
 

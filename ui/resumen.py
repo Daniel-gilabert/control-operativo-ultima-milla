@@ -62,12 +62,12 @@ def render_resumen(
     # ── Alerta: nuevos en Excel no están en BD ────────────────────────────────
     if nuevos_en_excel:
         with st.expander(
-            f"⚠️ {len(nuevos_en_excel)} empleado(s) en el Excel no están en la base de datos",
-            expanded=True,
+            f"Empleados nuevos en el Excel no registrados en BD ({len(nuevos_en_excel)})",
+            expanded=False,
         ):
-            st.caption("Puedes añadirlos directamente asignándolos a tu grupo.")
+            st.caption("Puedes añadirlos a tu grupo o ignorarlos.")
             for nombre_excel in nuevos_en_excel:
-                col_n, col_j, col_btn = st.columns([4, 2, 2])
+                col_n, col_j, col_btn, col_skip = st.columns([4, 2, 2, 1])
                 col_n.markdown(f"**{nombre_excel.title()}**")
                 jornada_nueva = col_j.number_input(
                     "Jornada (h/sem)",
@@ -80,9 +80,10 @@ def render_resumen(
                 )
                 with col_btn:
                     if st.button(
-                        "Añadir a BD",
+                        "Añadir",
                         key=f"btn_nuevo_{nombre_excel}",
                         use_container_width=True,
+                        type="primary",
                     ):
                         responsable_id = usuario.id if usuario else ""
                         emp_repo.crear_empleado(
@@ -90,8 +91,10 @@ def render_resumen(
                             responsable_id=responsable_id,
                             jornada_semanal=jornada_nueva,
                         )
-                        st.success(f"'{nombre_excel.title()}' añadido. Recarga para ver sus datos.")
+                        st.success(f"'{nombre_excel.title()}' añadido.")
                         st.rerun()
+                with col_skip:
+                    st.button("—", key=f"btn_skip_{nombre_excel}", help="No añadir", disabled=True)
 
     # ── Resultados normales ───────────────────────────────────────────────────
     resultados = _calc.calcular_resumen_global(
