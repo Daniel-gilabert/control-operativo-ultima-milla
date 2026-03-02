@@ -64,10 +64,11 @@ def _mostrar_ficha(srv: dict):
 
         with st.form(f"form_editar_srv_{sid}"):
             st.subheader("Datos básicos")
-            c1, c2, c3 = st.columns(3)
+            c1, c2, c3, c4 = st.columns(4)
             codigo      = c1.text_input("Código",      value=srv.get("codigo",""),           key=f"cod_{sid}")
             descripcion = c2.text_input("Descripción", value=srv.get("descripcion",""),       key=f"desc_{sid}")
             zona        = c3.text_input("Zona",        value=srv.get("zona","") or "",        key=f"zona_{sid}")
+            dimension   = c4.text_input("Dimensión",   value=srv.get("dimension","") or "",  key=f"dim_{sid}")
 
             c1, c2 = st.columns(2)
             fi_str  = srv.get("fecha_inicio_contrato","")
@@ -125,6 +126,7 @@ def _mostrar_ficha(srv: dict):
                 try:
                     get_supabase().table("servicios").update({
                         "codigo": codigo, "descripcion": descripcion, "zona": n(zona),
+                        "dimension": n(dimension),
                         "fecha_inicio_contrato": str(fi_cont),
                         "fecha_fin_contrato": str(ff_cont) if ff_cont else None,
                         "empleado_base_id": opts_emp[emp_sel],
@@ -178,6 +180,7 @@ def _mostrar_ficha(srv: dict):
             st.markdown("<span style='background:#DCFCE7;color:#166534;padding:2px 10px;"
                         "border-radius:6px;font-size:.85rem;font-weight:600'>✅ ACTIVO — sin fecha de fin</span>",
                         unsafe_allow_html=True)
+        if srv.get("dimension"):              st.write(f"Dimensión: **{srv['dimension']}**")
         if srv.get("facturacion_email"):      st.write(f"Facturación: {srv['facturacion_email']}")
         if srv.get("facturacion_forma_pago"): st.write(f"Pago: **{srv['facturacion_forma_pago']}**")
         if srv.get("numero_cuenta"):          st.write(f"IBAN: `{srv['numero_cuenta']}`")
@@ -323,10 +326,11 @@ with tab_nuevo:
     else:
         with st.form("form_nuevo_srv"):
             st.subheader("Datos básicos")
-            c1, c2, c3 = st.columns(3)
+            c1, c2, c3, c4 = st.columns(4)
             codigo      = c1.text_input("Código *  (ej: SRV-025)")
             descripcion = c2.text_input("Descripción *")
             zona        = c3.text_input("Zona / Localidad")
+            dimension   = c4.text_input("Dimensión")
 
             c1, c2 = st.columns(2)
             fi_cont     = c1.date_input("Fecha inicio del servicio", value=hoy)
@@ -371,6 +375,7 @@ with tab_nuevo:
                     try:
                         get_supabase().table("servicios").insert({
                             "codigo": codigo, "descripcion": descripcion, "zona": n(zona),
+                            "dimension": n(dimension),
                             "fecha_inicio_contrato": str(fi_cont),
                             "fecha_fin_contrato": str(ff_cont) if ff_cont else None,
                             "empleado_base_id": opts_emp[emp_sel],
