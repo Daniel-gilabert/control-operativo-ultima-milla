@@ -245,8 +245,8 @@ resumen = render_resumen(empleados, df_fichajes, mapa_festivos, mapa_incidencias
 render_exportacion(resumen, mes, anno, logo_path=LOGO_PATH)
 render_historico(usuario, resumen, anno, mes, mostrar_todos=False)
 
-# ── Auditoría (solo admin) ────────────────────────────────────────────────────
-if usuario.es_admin:
+# ── Auditoría (solo danielgilabert@prode.es) ─────────────────────────────────
+if usuario.email == "danielgilabert@prode.es":
     import pandas as pd
     st.divider()
     with st.expander("Registro de auditoría", expanded=False):
