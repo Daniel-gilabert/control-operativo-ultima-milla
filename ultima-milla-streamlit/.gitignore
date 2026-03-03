@@ -2,3 +2,9 @@
 __pycache__/
 *.pyc
 .env
+*.env
+_generar_passwords.py
+_ver_ids.py
+subir_fotos_empleados.py
+*.xlsx
+!PLANTILLA_SERVICIOS.xlsx
