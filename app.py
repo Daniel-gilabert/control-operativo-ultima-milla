@@ -119,6 +119,20 @@ with st.sidebar:
         st.session_state.clear()
         st.rerun()
 
+    # Auditoría solo para danielgilabert@prode.es
+    if usuario.email == "danielgilabert@prode.es":
+        st.divider()
+        st.markdown("**Auditoría**")
+        registros = auditoria_repo.get_ultimos(300)
+        if registros:
+            import pandas as pd
+            df_aud = pd.DataFrame(registros)[["ts", "email", "accion", "detalle", "resultado"]]
+            df_aud["ts"] = pd.to_datetime(df_aud["ts"]).dt.strftime("%d/%m %H:%M")
+            df_aud.columns = ["Hora", "Correo", "Acción", "Detalle", "Resultado"]
+            st.dataframe(df_aud, use_container_width=True, hide_index=True, height=400)
+        else:
+            st.caption("Sin registros aún.")
+
 # =============================================================================
 # ENRUTAMIENTO: panel user vs usuario normal
 # =============================================================================
@@ -244,17 +258,3 @@ render_configuracion(usuario, empleados, anno)
 resumen = render_resumen(empleados, df_fichajes, mapa_festivos, mapa_incidencias, anno, mes, usuario=usuario)
 render_exportacion(resumen, mes, anno, logo_path=LOGO_PATH)
 render_historico(usuario, resumen, anno, mes, mostrar_todos=False)
-
-# ── Auditoría (solo danielgilabert@prode.es) ─────────────────────────────────
-if usuario.email == "danielgilabert@prode.es":
-    import pandas as pd
-    st.divider()
-    with st.expander("Registro de auditoría", expanded=False):
-        registros = auditoria_repo.get_ultimos(300)
-        if registros:
-            df_aud = pd.DataFrame(registros)[["ts", "email", "accion", "detalle", "resultado"]]
-            df_aud["ts"] = pd.to_datetime(df_aud["ts"]).dt.strftime("%Y-%m-%d %H:%M:%S")
-            df_aud.columns = ["Fecha/Hora", "Correo", "Acción", "Detalle", "Resultado"]
-            st.dataframe(df_aud, use_container_width=True, hide_index=True)
-        else:
-            st.info("Sin registros de auditoría aún.")
