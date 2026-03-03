@@ -71,6 +71,7 @@ from repositories.festivo_repo import FestivoRepository
 from repositories.incidencia_repo import IncidenciaRepository
 from repositories.panel_acceso_repo import PanelAccesoRepository
 from repositories.historico_repo import HistoricoRepository
+from repositories import auditoria_repo
 from services.fichaje_service import FichajeService
 from services.calculo_service import CalculoService
 from ui.login import render_login, render_footer
@@ -167,8 +168,10 @@ if es_panel_user:
     try:
         df_fichajes = fichaje_svc.cargar_fichajes(uploaded)
         anno, mes   = fichaje_svc.detectar_periodo(df_fichajes)
+        auditoria_repo.registrar(usuario.email, "CARGA_EXCEL", f"Panel admin — {mes}/{anno}")
     except Exception as e:
         logger.exception("Error al procesar el Excel (panel user)")
+        auditoria_repo.registrar(usuario.email, "CARGA_EXCEL", str(e), "error")
         st.error(f"Error al leer el archivo: {e}")
         st.stop()
 
@@ -220,8 +223,10 @@ fichaje_svc = FichajeService()
 try:
     df_fichajes = fichaje_svc.cargar_fichajes(uploaded)
     anno, mes   = fichaje_svc.detectar_periodo(df_fichajes)
+    auditoria_repo.registrar(usuario.email, "CARGA_EXCEL", f"Responsable — {mes}/{anno}")
 except Exception as e:
     logger.exception("Error al procesar el Excel de fichajes")
+    auditoria_repo.registrar(usuario.email, "CARGA_EXCEL", str(e), "error")
     st.error(f"Error al leer el archivo: {e}")
     st.stop()
 
@@ -239,3 +244,17 @@ render_configuracion(usuario, empleados, anno)
 resumen = render_resumen(empleados, df_fichajes, mapa_festivos, mapa_incidencias, anno, mes, usuario=usuario)
 render_exportacion(resumen, mes, anno, logo_path=LOGO_PATH)
 render_historico(usuario, resumen, anno, mes, mostrar_todos=False)
+
+# ── Auditoría (solo admin) ────────────────────────────────────────────────────
+if usuario.es_admin:
+    import pandas as pd
+    st.divider()
+    with st.expander("Registro de auditoría", expanded=False):
+        registros = auditoria_repo.get_ultimos(300)
+        if registros:
+            df_aud = pd.DataFrame(registros)[["ts", "email", "accion", "detalle", "resultado"]]
+            df_aud["ts"] = pd.to_datetime(df_aud["ts"]).dt.strftime("%Y-%m-%d %H:%M:%S")
+            df_aud.columns = ["Fecha/Hora", "Correo", "Acción", "Detalle", "Resultado"]
+            st.dataframe(df_aud, use_container_width=True, hide_index=True)
+        else:
+            st.info("Sin registros de auditoría aún.")

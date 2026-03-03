@@ -1,0 +1,134 @@
+GUIA DE PUESTA EN MARCHA - Control Operativo Ultima Milla
+=========================================================
+
+REQUISITOS PREVIOS (instalar si no los tienes)
+-----------------------------------------------
+1. Node.js  → https://nodejs.org  (descarga la version "LTS")
+2. Git       → https://git-scm.com/download/win
+3. Cuenta en Supabase (gratis) → https://supabase.com
+4. Cuenta en GitHub (gratis)   → https://github.com
+
+
+==========================================================
+PASO 1: CREAR PROYECTO EN SUPABASE
+==========================================================
+
+1. Entra en https://supabase.com y haz clic en "Start your project"
+2. Inicia sesion con GitHub o Google
+3. Haz clic en "New project"
+4. Rellena:
+   - Name: ultima-milla
+   - Database Password: (anota esta contraseña, la necesitaras)
+   - Region: West EU (London) o la mas cercana a España
+5. Haz clic en "Create new project" y espera 2 minutos
+
+6. Cuando este listo, ve a: Settings (icono engranaje abajo a la izquierda)
+   → API → copia estos dos valores:
+     * Project URL          → lo pondras como NEXT_PUBLIC_SUPABASE_URL
+     * anon public key      → lo pondras como NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+7. Ve a: Settings → Database → Connection string → URI
+   → Copia la URL (empieza por postgresql://...)
+   → Sustituye [YOUR-PASSWORD] por la contraseña que pusiste en el paso 4
+   → Ese sera tu DATABASE_URL
+
+
+==========================================================
+PASO 2: CREAR LAS TABLAS EN SUPABASE
+==========================================================
+
+1. En Supabase, ve a: SQL Editor (icono de base de datos en el menu)
+2. Haz clic en "New query"
+3. Abre el archivo: db/schema.sql (de este proyecto)
+4. Copia todo su contenido y pegalo en el editor de Supabase
+5. Haz clic en "RUN" (boton verde)
+6. Deberia aparecer "Success. No rows returned"
+
+OPCIONAL - cargar datos de ejemplo:
+1. Repite el proceso con el archivo: db/seed.sql
+
+
+==========================================================
+PASO 3: CONFIGURAR LAS VARIABLES DE ENTORNO
+==========================================================
+
+1. Ve a la carpeta del proyecto: ultima-milla/
+2. Copia el archivo "env.local.txt" y renonmbralo a ".env.local"
+   (En Windows: boton derecho → Renombrar → escribe ".env.local")
+3. Abre ".env.local" con el Bloc de notas
+4. Sustituye los valores de ejemplo por los que copiaste en el Paso 1:
+   NEXT_PUBLIC_SUPABASE_URL=https://TU-ID.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+   DATABASE_URL=postgresql://postgres:TU-CONTRASEÑA@db.TU-ID.supabase.co:5432/postgres
+5. Guarda el archivo
+
+
+==========================================================
+PASO 4: ARREGLAR EL ARCHIVO ROUTE.TS (problema tecnico)
+==========================================================
+
+Por un error al crear las carpetas, existe un directorio llamado
+"route.ts" dentro de app/api/servicios/ que debe ser eliminado.
+
+1. Abre una terminal (PowerShell) en la carpeta ultima-milla/
+2. Ejecuta este comando:
+   rmdir /s /q "app\api\servicios\route.ts"
+3. Luego ejecuta:
+   copy "app\api\servicios\_CONTENIDO_route.ts" "app\api\servicios\route.ts"
+4. Borra el archivo temporal:
+   del "app\api\servicios\_CONTENIDO_route.ts"
+
+
+==========================================================
+PASO 5: INSTALAR Y ARRANCAR LA APLICACION
+==========================================================
+
+1. Abre una terminal (PowerShell) en la carpeta ultima-milla/
+2. Instala las dependencias:
+   npm install
+3. Arranca la aplicacion:
+   npm run dev
+4. Abre el navegador en: http://localhost:3000
+
+
+==========================================================
+PASO 6: SUBIR EL CODIGO A GITHUB
+==========================================================
+
+1. Entra en https://github.com
+2. Haz clic en el "+" (arriba a la derecha) → "New repository"
+3. Ponle nombre: ultima-milla
+4. Dejalo en "Private" si no quieres que sea publico
+5. NO marques "Add a README file"
+6. Haz clic en "Create repository"
+7. Copia la URL que aparece (termina en .git)
+
+8. Abre una terminal en la carpeta ultima-milla/
+9. Ejecuta el script de configuracion:
+   powershell -ExecutionPolicy Bypass -File setup-github.ps1
+10. Pega la URL del repositorio cuando te la pida
+
+
+==========================================================
+ENDPOINTS DE LA API (para referencia)
+==========================================================
+
+GET  /api/dashboard?fecha=2026-03-15     → Estado de todos los servicios
+GET  /api/servicios                      → Lista de servicios
+GET  /api/servicios/1/estado?fecha=...   → Estado de un servicio en una fecha
+POST /api/servicios                      → Crear servicio
+POST /api/sustituciones                  → Crear sustitucion temporal
+POST /api/ausencias                      → Registrar ausencia de empleado
+POST /api/incidencias                    → Registrar incidencia de vehiculo
+GET  /api/empleados                      → Lista empleados
+GET  /api/vehiculos                      → Lista vehiculos
+
+
+==========================================================
+PAGINAS DE LA APLICACION
+==========================================================
+
+/              → Dashboard semaforo (operativos / en riesgo / no operativos)
+/servicios     → Gestion de servicios
+/empleados     → Gestion de empleados
+/vehiculos     → Gestion de vehiculos con alertas de ITV/seguro
