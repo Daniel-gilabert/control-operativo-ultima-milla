@@ -39,21 +39,25 @@ def render_login() -> bool:
     col_l, col_c, col_r = st.columns([1, 2, 1])
     with col_c:
         if os.path.exists(_logo):
-            st.image(_logo, use_container_width=True)
+            _, img_col, _ = st.columns([1, 2, 1])
+            with img_col:
+                st.image(_logo, width=160)
         st.markdown(
             """
             <div style="
                 padding:2rem 2rem 1.5rem;
                 background:#ffffff;
                 border-radius:12px;
-                box-shadow:0 4px 24px rgba(26,61,110,.12);
-                margin-top:0.5rem;
+                box-shadow:0 4px 24px rgba(26,61,110,.10);
+                margin-top:0.8rem;
             ">
-                <h2 style="color:#1a3d6e;text-align:center;margin-bottom:0.2rem;">
+                <h3 style="color:#1a3d6e;text-align:center;margin-bottom:0.1rem;
+                           font-weight:600;letter-spacing:.5px;">
                     WorkTimeAsistem
-                </h2>
-                <p style="color:#2e6da4;text-align:center;font-size:0.9rem;margin-bottom:1.4rem;">
-                    Fundación PRODE — Control Horario
+                </h3>
+                <p style="color:#6c8ebf;text-align:center;font-size:0.82rem;
+                          margin-bottom:1.4rem;letter-spacing:.3px;">
+                    Fundación PRODE · Control Horario
                 </p>
             </div>
             """,
