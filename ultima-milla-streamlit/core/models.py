@@ -8,7 +8,6 @@ class Empleado:
     id: int
     nombre: str
     apellidos: str
-    dni: str
     telefono: Optional[str] = None
     email: Optional[str] = None
 

@@ -51,17 +51,13 @@ with tab_nuevo:
             telefono = st.text_input("TelÃ©fono")
             email    = st.text_input("Email")
         submitted = st.form_submit_button("Crear empleado", type="primary")
-              if submitted:
-            if not nombre or not apellidos:
-                st.error("Nombre y apellidos son obligatorios.")
+        if submitted:
             else:
                 try:
-                    crear_empleado(nombre, apellidos, telefono or None, email or None)
                     st.success(f"Empleado **{nombre} {apellidos}** creado.")
                     st.rerun()
                 except Exception as e:
                     st.error(f"Error: {e}")
-
 
 # â”€â”€ Ausencias â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 with tab_ausencias:

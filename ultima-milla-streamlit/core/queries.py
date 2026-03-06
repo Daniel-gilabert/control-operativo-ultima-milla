@@ -29,7 +29,7 @@ def _clean(val) -> str | None:
 def _row_empleado(r: dict) -> Empleado:
     return Empleado(
         id=r["id"], nombre=r["nombre"], apellidos=r["apellidos"],
-        dni=r["dni"], telefono=_clean(r.get("telefono")), email=_clean(r.get("email"))
+        telefono=_clean(r.get("telefono")), email=_clean(r.get("email"))
     )
 
 def _row_vehiculo(r: dict) -> Vehiculo:
@@ -77,11 +77,10 @@ def get_empleados() -> list[dict]:
     )
     return res.data
 
-def crear_empleado(nombre, apellidos, dni, telefono=None, email=None) -> dict:
+def crear_empleado(nombre, apellidos, telefono=None, email=None) -> dict:
     sb = get_supabase()
     res = sb.table("empleados").insert({
-        "nombre": nombre, "apellidos": apellidos, "dni": dni,
-        "telefono": telefono or None, "email": email or None
+        "nombre": nombre, "apellidos": apellidos, "telefono": telefono or None, "email": email or None
     }).execute()
     return res.data[0]
 
